@@ -12,6 +12,7 @@ function hide_cursor() {
 }
 trap hide_cursor EXIT
 
+tput civis
 bash ~/Programs/pomo_termux/pomo.sh status | while IFS= read -r line; do
 
   # Save cursor position
