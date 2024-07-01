@@ -1,12 +1,16 @@
 #!/bin/bash
 
-# clear
+function init_tgui() {
+    clear
+    toilet -f ivrit --gay "Pomo"
+}
+init_tgui
 
-function cleanup() {
+# Hide the cursor
+function hide_cursor() {
     tput cnorm
 }
-
-trap cleanup EXIT
+trap hide_cursor EXIT
 
 bash ~/Programs/pomo_termux/pomo.sh status | while IFS= read -r line; do
 
