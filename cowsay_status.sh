@@ -1,6 +1,12 @@
 #!/bin/bash
 
-clear
+# clear
+
+function cleanup() {
+    tput cnorm
+}
+
+trap cleanup EXIT
 
 bash ~/Programs/pomo_termux/pomo.sh status | while IFS= read -r line; do
 
