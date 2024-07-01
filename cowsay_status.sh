@@ -2,7 +2,7 @@
 
 clear
 
-bash ~/Programs/pomo/pomo.sh status | while IFS= read -r line; do
+bash ~/Programs/pomo_termux/pomo.sh status | while IFS= read -r line; do
 
   # Save cursor position
   tput sc
