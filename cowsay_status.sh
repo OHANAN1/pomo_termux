@@ -98,9 +98,10 @@ while true; do
     termux-vibrate -d 1000
     termux-notification -t "Pomodoro" -c "Status changed to $current_status" --prio high
     termux-tts-speak "Status changed to $current_status"
-  fi
 
-  old_status=$current_status
+    old_short_status=$short_status
+
+  fi
 
 done
 
