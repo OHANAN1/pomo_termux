@@ -202,10 +202,13 @@ function pomo_msg_callback {
 }
 
 function send_msg {
-    if [ "$(uname)" == "Darwin" ]; then
-        osascript -e "tell app \"System Events\" to display dialog \"${1}\"" &> /dev/null
-    elif command -v notify-send &> /dev/null; then
-        notify-send -a "Pomodoro" "${1}"
+    # if [ "$(uname)" == "Darwin" ]; then
+    #     osascript -e "tell app \"System Events\" to display dialog \"${1}\"" &> /dev/null
+    # elif command -v notify-send &> /dev/null; then
+    #     notify-send -a "Pomodoro" "${1}"
+    termux-toast "${1}"
+    termux-vibrate -d 1000
+    termux-notification -t "Pomodoro" -c "Pomodoro" -i 0 -s "Pomodoro" -u critical -p "Pomodoro" -a "Pomodoro" -c "${1}"
     else
         echo "${1}"
     fi
