@@ -38,6 +38,8 @@ tput civis
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
 # ╘══════════════════════════════════════════════════════════╛
+counter=0
+
 while true; do
 
   pomodoro_clock=$($PATH_TO_POMO_SCRIPT clock)
@@ -60,8 +62,14 @@ while true; do
   # Restore cursor position -> Redraws only one line
   tput rc
 
-
   sleep 1
+
+  # Redraw the whole screen every 10 seconds
+  counter=$((counter+1))
+  if [ $counter -eq 10 ]; then
+    init_tgui
+    counter=0
+  fi
 
   if [ "$status" == "B" ]; then
 
