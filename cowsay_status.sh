@@ -83,7 +83,7 @@ while true; do
 
   # Break script after break so new task can be set
   # Not final version yet, since this is hacky
-  if [ "$short_status" == "W" ] && ["$old_short_status" == "B" ]; then
+  if [ "$short_status" == "W" ] && [ "$old_short_status" == "B" ]; then
     termux-notification -t "Pomodoro" -c "Break over select new task" --prio high
     termux-tts-speak "Break over select new task"
     $PATH_TO_POMO_SCRIPT stop
