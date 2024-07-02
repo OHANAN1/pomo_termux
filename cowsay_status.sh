@@ -93,7 +93,7 @@ while true; do
     break
   fi
 
-  if [ "$current_status" != "$old_status" ]; then
+  if [ "$short_status" != "$old_short_status" ]; then
     termux-toast "Status changed to $current_status"
     termux-vibrate -d 1000
     termux-notification -t "Pomodoro" -c "Status changed to $current_status" --prio high
