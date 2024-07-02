@@ -64,9 +64,9 @@ while true; do
 
   sleep 1
 
-  # Redraw the whole screen every 10 seconds
+  # Redraw the whole screen every 30 seconds
   counter=$((counter+1))
-  if [ $counter -eq 10 ]; then
+  if [ $counter -eq 30 ]; then
     init_tgui
     counter=0
   fi
