@@ -17,6 +17,12 @@ PATH_TO_POMO_SCRIPT=~/Programs/pomo_termux/pomo.sh
 # ╒══════════════════════════════════════════════════════════╕
 #                            Setups
 # ╘══════════════════════════════════════════════════════════╛
+
+# Hide the cursor
+function hide_cursor() {
+    tput cnorm
+}
+
 function init_tgui() {
     clear
     echo -e "\n\n\n\n"
@@ -25,38 +31,42 @@ function init_tgui() {
     echo "----------------"
     echo "  $TASK"
     echo -e "\n\n\n\n"
-}
-init_tgui
 
-# Hide the cursor
-function hide_cursor() {
-    tput cnorm
+    # Hide cursor on exit
+    trap hide_cursor EXIT
+    tput civis
 }
-trap hide_cursor EXIT
-tput civis
+
 
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
 # ╘══════════════════════════════════════════════════════════╛
 counter=0
+old_status="Work"
+
+$PATH_TO_POMO_SCRIPT start
+
+init_tgui
 
 while true; do
 
   pomodoro_clock=$($PATH_TO_POMO_SCRIPT clock)
-  status="${pomodoro_clock:1:1}"
+  short_status="${pomodoro_clock:1:1}"
   time_left="${pomodoro_clock:2:6}"
+
+  if [ "$short_status" == "W" ]; then
+    current_status="Work "
+  elif [ "$short_status" == "B" ]; then
+    current_status="Break"
+  else
+    echo "Unknown status: $short_status"
+  fi
 
   # Save cursor position
   tput sc
 
   # Main output
-  if [ "$status" == "W" ]; then
-    echo "Work "
-  elif [ "$status" == "B" ]; then
-    echo "Break"
-  else
-    echo "Unknown status: $status"
-  fi
+  echo "Status: $current_status"
   echo $time_left | cowsay
 
   # Restore cursor position -> Redraws only one line
@@ -71,17 +81,26 @@ while true; do
     counter=0
   fi
 
-  if [ "$status" == "B" ]; then
-
-    termux-toast "${1}"
-    termux-vibrate -d 1000
-    termux-tts-speak "${1}"
-    termux-notification -t "Pomodoro" -c "${1}" --prio high
+  # Break script after break so new task can be set
+  # Not final version yet, since this is hacky
+  if [ "$current_status" == "Work" and "$old_status" == "Break" ]; then
+    termux-notification -t "Pomodoro" -c "Break over select new task" --prio high
+    termux-tts-speak "Break over select new task"
+    $PATH_TO_POMO_SCRIPT stop
 
     clear
 
     break
   fi
+
+  if [ "$current_status" != "$old_status" ]; then
+    termux-toast "Status changed to $current_status"
+    termux-vibrate -d 1000
+    termux-notification -t "Pomodoro" -c "Status changed to $current_status" --prio high
+    termux-tts-speak "Status changed to $current_status"
+  fi
+
+  old_status=$current_status
 
 done
 
