@@ -211,8 +211,7 @@ function send_msg {
     # fi
     termux-toast "${1}"
     termux-vibrate -d 1000
-    termux-notification -t "Pomodoro" -c "Pomodoro" -i 0 -s "Pomodoro" -u critical -p "Pomodoro" -a "Pomodoro" -c "${1}"
-}
+    termux-notification -t "Pomodoro" --prio high
 
 #--- Help ---
 
