@@ -38,11 +38,43 @@ tput civis
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
 # ╘══════════════════════════════════════════════════════════╛
-bash $PATH_TO_POMO_SCRIPT status | while IFS= read -r line; do
+while true; do
+
+  pomodoro_clock=$($PATH_TO_POMO_SCRIPT clock)
+  status="${pomodoro_clock:1:1}"
+  time_left="${pomodoro_clock:2:6}"
+
   # Save cursor position
   tput sc
+
   # Main output
-  echo "$line" | cowsay
+  if [ "$status" == "W" ]; then
+    echo "Work "
+  elif [ "$status" == "B" ]; then
+    echo "Break"
+  else
+    echo "Unknown status: $status"
+  fi
+  echo $time_left | cowsay
+
   # Restore cursor position -> Redraws only one line
   tput rc
+
+
+  sleep 1
+
+  if [ "$status" == "B" ]; then
+
+    termux-toast "${1}"
+    termux-vibrate -d 1000
+    termux-tts-speak "${1}"
+    termux-notification -t "Pomodoro" -c "${1}" --prio high
+
+    clear
+
+    break
+  fi
+
 done
+
+
