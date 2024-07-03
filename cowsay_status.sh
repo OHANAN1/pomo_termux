@@ -13,6 +13,7 @@ fi
 # ╘══════════════════════════════════════════════════════════╛
 TASK="$1"
 PATH_TO_POMO_SCRIPT=~/Programs/pomo_termux/pomo.sh
+COWSAY_FILE=~/Programs/pomo_termux/tutoro.cow
 
 # ╒══════════════════════════════════════════════════════════╕
 #                            Setups
@@ -99,7 +100,7 @@ while true; do
 
   # Main output
   echo "Status: $current_status"
-  echo "$time_left" | cowsay
+  echo "$time_left" | cowsay -f $COWSAY_FILE
 
   # Restore cursor position -> Redraws only one line
   tput rc
