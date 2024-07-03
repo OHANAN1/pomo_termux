@@ -68,7 +68,7 @@ function get_current_status() {
 }
 
 function draw_status() {
-  echo "Cycle: $counter_pomodoros / 4"
+  echo "Pomodoro: $counter_pomodoros / 4"
   echo -e "Status: $current_status \n"
   echo "$time_left" | cowthink -f $COWSAY_FILE
 }
@@ -77,7 +77,7 @@ function draw_status() {
 #                          Main Loop
 # ╘══════════════════════════════════════════════════════════╛
 counter_seconds=0
-counter_pomodoros=0
+counter_pomodoros=1
 old_short_status="W"
 
 $PATH_TO_POMO_SCRIPT start
