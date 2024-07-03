@@ -26,7 +26,6 @@ function cleanup() {
 
 function init_tgui() {
     clear
-    echo -e "\n\n\n\n"
     toilet -f ivrit --gay "Pomo"
     echo "Current task: "
     echo "----------------"
@@ -99,7 +98,7 @@ while true; do
   tput sc
 
   # Main output
-  echo "Status: $current_status"
+  echo -e "Status: $current_status \n"
   echo "$time_left" | cowsay -f $COWSAY_FILE
 
   # Restore cursor position -> Redraws only one line
