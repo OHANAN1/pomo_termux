@@ -67,6 +67,12 @@ function get_current_status() {
 
 }
 
+function draw_status() {
+  echo "Cycle: $counter_pomodoros / 4"
+  echo -e "Status: $current_status \n"
+  echo "$time_left" | cowthink -f $COWSAY_FILE
+}
+
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
 # ╘══════════════════════════════════════════════════════════╛
@@ -96,11 +102,7 @@ while true; do
 
   # Save cursor position
   tput sc
-
-  # Main output
-  echo -e "Status: $current_status \n"
-  echo "$time_left" | cowthink -f $COWSAY_FILE
-
+  draw_status
   # Restore cursor position -> Redraws only one line
   tput rc
 
