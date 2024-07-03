@@ -22,6 +22,7 @@ COWSAY_FILE=~/Programs/pomo_termux/tutoro.cow
 # cleanup -> Add cursor back
 function cleanup() {
     tput cnorm
+    clear
 }
 
 function init_tgui() {
