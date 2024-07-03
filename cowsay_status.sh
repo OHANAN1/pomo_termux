@@ -18,8 +18,8 @@ PATH_TO_POMO_SCRIPT=~/Programs/pomo_termux/pomo.sh
 #                            Setups
 # ╘══════════════════════════════════════════════════════════╛
 
-# Hide the cursor
-function hide_cursor() {
+# cleanup -> Add cursor back
+function cleanup() {
     tput cnorm
 }
 
@@ -33,7 +33,7 @@ function init_tgui() {
     echo -e "\n\n\n\n"
 
     # Hide cursor on exit
-    trap hide_cursor EXIT
+    trap cleanup EXIT
     tput civis
 }
 
@@ -120,10 +120,10 @@ while true; do
     fi
 
     clear
-    while true; do
 
-        # Start continuouse notification
+    while true; do
         notify "Select a new task"
+        cleanup
 
         read -sp "Select new Task: " TASK
         if [ -z "$TASK" ]; then
@@ -132,7 +132,9 @@ while true; do
             break
         fi
     done
+
     notify "Starting pomodoro for task $TASK"
+    init_tgui "$TASK"
 
 
   fi
