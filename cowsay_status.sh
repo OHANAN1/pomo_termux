@@ -99,7 +99,7 @@ while true; do
 
   # Main output
   echo -e "Status: $current_status \n"
-  echo "$time_left" | cowsay -f $COWSAY_FILE
+  echo "$time_left" | cowthink -f $COWSAY_FILE
 
   # Restore cursor position -> Redraws only one line
   tput rc
