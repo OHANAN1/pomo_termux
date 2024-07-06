@@ -14,6 +14,8 @@ fi
 TASK="$1"
 PATH_TO_POMO_SCRIPT=~/Programs/pomo_termux/pomo.sh
 COWSAY_FILE=~/Programs/pomo_termux/tutoro.cow
+export POMO_WORK_TIME=25
+export POMO_BREAK_TIME=5
 
 # ╒══════════════════════════════════════════════════════════╕
 #                            Setups
@@ -74,6 +76,17 @@ function draw_status() {
   echo "$time_left" | cowthink -f $COWSAY_FILE
 }
 
+function select_task() {
+    while true; do
+        read -pr "Select new Task: " TASK
+        if [ -z "$TASK" ]; then
+            echo "Task cannot be empty"
+        else
+            break
+        fi
+    done
+}
+
 
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
@@ -114,6 +127,8 @@ while true; do
   # When the break is over new cycle starts
   if [ "$short_status" == "W" ] && [ "$old_short_status" == "B" ]; then
     notify "The Break is over, select a new task"
+    # Pause the timer so the user can select a new task
+    $PATH_TO_POMO_SCRIPT pause
 
     # Break every 4 pomodoros
     if [ $counter_pomodoros -eq 4 ]; then
@@ -126,7 +141,6 @@ while true; do
 
     while true; do
         cleanup
-        $PATH_TO_POMO_SCRIPT pause
 
         notify "Select a new task"
         read -pr "Select new Task: " TASK
@@ -134,7 +148,6 @@ while true; do
             echo "Task cannot be empty"
         else
             # Unpause the timer
-            $PATH_TO_POMO_SCRIPT pause
             break
         fi
     done
@@ -144,6 +157,8 @@ while true; do
     notify "Starting pomo cycle $counter_pomodoros for:$TASK"
     init_tgui "$TASK"
 
+    # Restart the timer
+    $PATH_TO_POMO_SCRIPT pause
   fi
 
   if [ "$short_status" != "$old_short_status" ]; then
