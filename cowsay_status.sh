@@ -43,9 +43,9 @@ function init_tgui() {
 # ╘══════════════════════════════════════════════════════════╛
 
 function notify() {
+    termux-vibrate -d 1000 &&
+    termux-tts-speak "$1" &&
     termux-notification -t "Pomodoro" -c "$1" --prio high
-    termux-tts-speak "$1"
-    termux-vibrate -d 1000
 }
 
 function exit_pomodoro() {
@@ -125,11 +125,11 @@ while true; do
     clear
 
     while true; do
-        notify "Select a new task"
         cleanup
         $PATH_TO_POMO_SCRIPT pause
 
-        read -sp "Select new Task: " TASK
+        notify "Select a new task"
+        read -spr "Select new Task: " TASK
         if [ -z "$TASK" ]; then
             echo "Task cannot be empty"
         else
