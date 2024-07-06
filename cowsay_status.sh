@@ -74,6 +74,7 @@ function draw_status() {
   echo "$time_left" | cowthink -f $COWSAY_FILE
 }
 
+
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
 # ╘══════════════════════════════════════════════════════════╛
@@ -114,7 +115,6 @@ while true; do
   if [ "$short_status" == "W" ] && [ "$old_short_status" == "B" ]; then
     notify "The Break is over, select a new task"
 
-    counter_pomodoros=$((counter_pomodoros+1))
     # Break every 4 pomodoros
     if [ $counter_pomodoros -eq 4 ]; then
         notify "Long break starts now. Bye!"
@@ -127,18 +127,22 @@ while true; do
     while true; do
         notify "Select a new task"
         cleanup
+        $PATH_TO_POMO_SCRIPT pause
 
         read -sp "Select new Task: " TASK
         if [ -z "$TASK" ]; then
             echo "Task cannot be empty"
         else
+            # Unpause the timer
+            $PATH_TO_POMO_SCRIPT pause
             break
         fi
     done
 
-    notify "Starting pomodoro for task $TASK"
-    init_tgui "$TASK"
+    counter_pomodoros=$((counter_pomodoros+1))
 
+    notify "Starting pomo cycle $counter_pomodoros for:$TASK"
+    init_tgui "$TASK"
 
   fi
 

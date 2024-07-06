@@ -1,0 +1,10 @@
+## ascii by --- Duke Lee
+$the_cow = <<"EOC";
+vvvvvvvvv
+    I    /|__/|
+    I  /O O   |
+    I /_____   |      /|/|
+   J|/^ ^ ^ \\  |    /00  |    _//|
+    |^ ^ ^ ^ |W|   |/^^\\ |   /oo |
+     m_____m_|_|    \\m_m_|   \\mm_|
+EOC
