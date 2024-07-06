@@ -129,7 +129,7 @@ while true; do
         $PATH_TO_POMO_SCRIPT pause
 
         notify "Select a new task"
-        read -spr "Select new Task: " TASK
+        read -pr "Select new Task: " TASK
         if [ -z "$TASK" ]; then
             echo "Task cannot be empty"
         else
