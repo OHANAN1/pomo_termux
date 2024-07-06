@@ -16,12 +16,12 @@ PATH_TO_POMO_SCRIPT=~/Programs/pomo_termux/pomo.sh
 COWSAY_FILE=~/Programs/pomo_termux/tutoro.cow
 export POMO_WORK_TIME=25
 export POMO_BREAK_TIME=5
+POMOS_PER_CYCLE=4
 
 # ╒══════════════════════════════════════════════════════════╕
-#                            Setups
+#                      Utility functions
 # ╘══════════════════════════════════════════════════════════╛
 
-# cleanup -> Add cursor back
 function cleanup() {
     tput cnorm
     clear
@@ -35,14 +35,9 @@ function init_tgui() {
     echo "  $1"
     echo -e "\n\n\n\n"
 
-    # Hide cursor on exit
-    trap cleanup EXIT
+    trap cleanup EXIT # Redraw cursor when exiting
     tput civis
 }
-
-# ╒══════════════════════════════════════════════════════════╕
-#                      Utility functions
-# ╘══════════════════════════════════════════════════════════╛
 
 function notify() {
     termux-vibrate -d 1000 &&
@@ -66,19 +61,19 @@ function get_current_status() {
   else
     echo "Unknown status: $short_status"
   fi
-
-
 }
 
 function draw_status() {
-  echo "Pomodoro: $counter_pomodoros / 4"
+  echo "Pomodoro: $counter_pomodoros / $POMOS_PER_CYCLE"
   echo -e "Status: $current_status \n"
   echo "$time_left" | cowthink -f $COWSAY_FILE
 }
 
 function select_task() {
+    notify "Please select a new task."
     while true; do
-        read -pr "Select new Task: " TASK
+        echo "Select a new task:"
+        read -r TASK
         if [ -z "$TASK" ]; then
             echo "Task cannot be empty"
         else
@@ -87,6 +82,31 @@ function select_task() {
     done
 }
 
+function switch_from_break_to_work() {
+    notify "The Break is over, select a new task"
+    # Pause the timer so the user can select a new task
+    $PATH_TO_POMO_SCRIPT pause
+
+    cleanup
+    select_task
+
+    counter_pomodoros=$((counter_pomodoros+1))
+    notify "Starting pomo cycle $counter_pomodoros for:$TASK"
+    init_tgui "$TASK"
+    # Restart the timer
+    $PATH_TO_POMO_SCRIPT pause
+}
+
+function switch_from_work_to_break() {
+    if [ $counter_pomodoros -eq "$POMOS_PER_CYCLE" ]; then
+        notify "Long break starts now. Bye!"
+        exit_pomodoro
+    else
+        notify "The work is over, take a short break"
+    fi
+}
+
+
 
 # ╒══════════════════════════════════════════════════════════╕
 #                          Main Loop
@@ -94,6 +114,8 @@ function select_task() {
 counter_seconds=0
 counter_pomodoros=1
 old_short_status="W"
+
+select_task
 
 $PATH_TO_POMO_SCRIPT start
 notify "Starting pomodoro for task $TASK"
@@ -112,62 +134,20 @@ while true; do
   pomodoro_clock=$($PATH_TO_POMO_SCRIPT clock)
   short_status="${pomodoro_clock:1:1}"
   time_left="${pomodoro_clock:2:6}"
-
   current_status=$(get_current_status "$short_status")
 
-  # Save cursor position
-  tput sc
+  tput sc # Save cursor position
   draw_status
-  # Restore cursor position -> Redraws only one line
-  tput rc
+  tput rc # Restore cursor position -> Redraws only one line
 
   sleep 1
-
-
-  # When the break is over new cycle starts
+  
   if [ "$short_status" == "W" ] && [ "$old_short_status" == "B" ]; then
-    notify "The Break is over, select a new task"
-    # Pause the timer so the user can select a new task
-    $PATH_TO_POMO_SCRIPT pause
-
-    # Break every 4 pomodoros
-    if [ $counter_pomodoros -eq 4 ]; then
-        notify "Long break starts now. Bye!"
-        termux-vibrate -d 1000
-        exit_pomodoro
-    fi
-
-    clear
-
-    while true; do
-        cleanup
-
-        notify "Select a new task"
-        read -pr "Select new Task: " TASK
-        if [ -z "$TASK" ]; then
-            echo "Task cannot be empty"
-        else
-            # Unpause the timer
-            break
-        fi
-    done
-
-    counter_pomodoros=$((counter_pomodoros+1))
-
-    notify "Starting pomo cycle $counter_pomodoros for:$TASK"
-    init_tgui "$TASK"
-
-    # Restart the timer
-    $PATH_TO_POMO_SCRIPT pause
+    switch_from_break_to_work
+  elif [ "$short_status" == "B" ] && [ "$old_short_status" == "W" ]; then
+    switch_from_work_to_break
   fi
-
-  if [ "$short_status" != "$old_short_status" ]; then
-    termux-toast "Status changed to $current_status"
-    notify "Status changed to $current_status"
-    termux-vibrate -d 1000
-    old_short_status=$short_status
-
-  fi
+  old_short_status=$short_status
 
 done
 
