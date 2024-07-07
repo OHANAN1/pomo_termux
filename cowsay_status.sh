@@ -1,17 +1,8 @@
 #!/bin/bash
 
-if [ -z "$1" ]
-then
-    echo "----------------"
-    echo "No task provided"
-    echo "Usage: $0 <task>"
-    exit
-fi
-
 # ╒══════════════════════════════════════════════════════════╕
 #                           Variables
 # ╘══════════════════════════════════════════════════════════╛
-TASK="$1"
 PATH_TO_POMO_SCRIPT=~/Programs/pomo_termux/pomo.sh
 COWSAY_FILE=~/Programs/pomo_termux/tutoro.cow
 export POMO_WORK_TIME=25
@@ -70,16 +61,12 @@ function draw_status() {
 }
 
 function select_task() {
-    notify "Please select a new task."
-    while true; do
-        echo "Select a new task:"
-        read -r TASK
-        if [ -z "$TASK" ]; then
-            echo "Task cannot be empty"
-        else
-            break
-        fi
-    done
+    notify "Please select a task."
+    echo "Select a task:"
+    read -r TASK
+    if [ -z "$TASK" ]; then
+        TASK="No task selected"
+    fi
 }
 
 function switch_from_break_to_work() {
@@ -118,7 +105,7 @@ old_short_status="W"
 select_task
 
 $PATH_TO_POMO_SCRIPT start
-notify "Starting pomodoro for task $TASK"
+notify "Starting pomodoro for task: $TASK"
 
 init_tgui "$TASK"
 
